@@ -30,7 +30,7 @@ As instruções de execução serão adicionadas conforme o desenvolvimento.
 O BookSpace é desenvolvido por uma equipe de dois integrantes.
 
 ### Módulo de autenticação e leitor
-Responsável: Integrante 1
+Responsável: Angela
 
 - Login e logout
 - Identificação do perfil do usuário
@@ -41,7 +41,7 @@ Responsável: Integrante 1
 - Visualização de atrasos
 
 ### Módulo administrativo
-Responsável: Integrante 2
+Responsável: Mario 
 
 - Área inicial do bibliotecário
 - Cadastro, edição e exclusão de livros
