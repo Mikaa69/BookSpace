@@ -16,8 +16,13 @@ formularioLogin.addEventListener("submit", function(evento) {
 
         const usuario = Auth.obterUsuarioLogado();
 
-        console.log("Usuário conectado:", usuario.nome);
-        console.log("Perfil:", usuario.perfil);
+        if (usuario.perfil === "leitor") {
+        window.location.href = "leitor.html";
+        
+        } else if (usuario.perfil === "bibliotecario") {
+        mensagemLogin.textContent =
+        "A área administrativa ainda está em desenvolvimento.";
+}
     } else {
         mensagemLogin.style.color = "#c62828";
         mensagemLogin.textContent = "E-mail ou senha incorretos.";

@@ -1,0 +1,52 @@
+
+/* Menu de navegação do leitor */
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+nav button {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px;
+}
+
+/* Área de conteúdo */
+
+#conteudo-leitor {
+    margin-top: 25px;
+    padding: 25px;
+    background-color: #f4f6fb;
+    border-radius: 10px;
+    text-align: left;
+    min-height: 180px;
+}
+
+#conteudo-leitor h3 {
+    color: #253b80;
+    margin-bottom: 15px;
+}
+
+#conteudo-leitor p {
+    line-height: 1.6;
+}
+
+/* Ajustes para celulares */
+
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+    }
+
+    nav button {
+        width: 100%;
+    }
+
+    #conteudo-leitor {
+        padding: 15px;
+    }
+}
