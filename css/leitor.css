@@ -50,3 +50,44 @@ nav button {
         padding: 15px;
     }
 }
+
+/* Cartões do catálogo, empréstimos e histórico */
+#lista-livros article,
+#lista-emprestimos article,
+#lista-historico article {
+    background-color: #f4f6fb;
+    border: 1px solid #dce2ef;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+}
+
+#lista-livros article h4,
+#lista-emprestimos article h4,
+#lista-historico article h4 {
+    color: #253b80;
+    margin-bottom: 8px;
+}
+
+#lista-livros article p,
+#lista-emprestimos article p,
+#lista-historico article p {
+    margin: 6px 0;
+}
+
+/* Campo de pesquisa do catálogo */
+#pesquisa-livros {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0 20px;
+    border: 1px solid #dce2ef;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#pesquisa-livros:focus {
+    border-color: #253b80;
+    box-shadow: 0 0 0 3px rgba(37, 59, 128, 0.15);
+}
