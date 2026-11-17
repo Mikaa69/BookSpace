@@ -1,0 +1,53 @@
+
+/* Formulário de login */
+
+#form-login {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+#form-login label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#form-login input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#form-login input:focus {
+    outline: 2px solid #253b80;
+    border-color: #253b80;
+}
+
+#form-login button {
+    margin-top: 10px;
+}
+
+#mensagem-login {
+    margin: 0;
+    font-size: 14px;
+    color: #c62828;
+    text-align: center;
+}
+
+#mensagem-login:empty {
+    display: none;
+}
+
+main a {
+    color: #253b80;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+main a:hover {
+    text-decoration: underline;
+}
