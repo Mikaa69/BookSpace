@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Área do Leitor - BookSpace</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/leitor.css">
+</head>
+<body>
+
+    <header>
+        <h1>BookSpace</h1>
+        <p>Área do Leitor</p>
+    </header>
+
+    <main>
+        <h2 id="boas-vindas">Bem-vindo!</h2>
+
+        <nav aria-label="Menu do leitor">
+            <button type="button" id="btn-catalogo">
+                Catálogo de Livros
+            </button>
+
+            <button type="button" id="btn-emprestimos">
+                Meus Empréstimos
+            </button>
+
+            <button type="button" id="btn-historico">
+                Meu Histórico
+            </button>
+
+            <button type="button" id="btn-sair">
+                Sair
+            </button>
+        </nav>
+
+        <section id="conteudo-leitor">
+            <h3>Minha Biblioteca</h3>
+            <p>Escolha uma opção do menu para começar.</p>
+        </section>
+    </main>
+
+    <script src="js/services/storage.js"></script>
+    <script src="js/services/auth.js"></script>
+    <script src="js/pages/leitor.js"></script>
+
+</body>
+</html>
