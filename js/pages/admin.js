@@ -378,7 +378,7 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
                 listaLeitores.appendChild(item);
             });
         }
-   
+
         formLeitor.addEventListener("submit", function (evento) {
             evento.preventDefault();
 
@@ -530,19 +530,19 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
                     ? emprestimo.dataPrevista.split("-").reverse().join("/")
                     : "Não informada";
 
+                // Exibir as informações do empréstimo ativo
                 descricao.textContent =
                     "Leitor: " + (leitor ? leitor.nome : "Não encontrado") +
                     " | Livro: " + (livro ? livro.titulo : "Não encontrado") +
                     " | Devolução prevista: " + dataPrevista;
 
-                
                 // Botão para devolver o livro
                 const botaoDevolver = document.createElement("button");
                 botaoDevolver.type = "button";
                 botaoDevolver.textContent = "Devolver";
                 botaoDevolver.className = "btn-devolver";
 
-                
+
                 botaoDevolver.addEventListener("click", function () {
                     const mensagemEmprestimo =
                         document.getElementById("mensagemEmprestimo");
@@ -632,7 +632,7 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
                     });
                 });
 
-                item.appendChild(botaoDevolver);    
+                item.appendChild(botaoDevolver);
 
                 item.appendChild(descricao);
                 listaEmprestimos.appendChild(item);
@@ -745,7 +745,7 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
                 return;
             }
 
-            
+
             // RN-02: prazo de devolução de 7 dias corridos
             const agora = new Date();
 
@@ -807,6 +807,8 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
 
         });
 
+    });
+
     // GERENCIAMENTO DO HISTÓRICO
     botaoHistorico.addEventListener("click", function () {
         conteudo.innerHTML = `
@@ -816,8 +818,72 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             <h3>Registros de empréstimos</h3>
             <div id="listaHistorico"></div>
         `;
-    });
 
+        // Carregar os registros de empréstimos
+        const listaHistorico = document.getElementById("listaHistorico");
+
+        const emprestimos = Storage.carregar("bookspace_emprestimos") || [];
+        const usuarios = Storage.carregar("bookspace_usuarios") || [];
+        const livros = Storage.carregar("bookspace_livros") || [];
+
+        if (emprestimos.length === 0) {
+            listaHistorico.textContent = "Nenhum empréstimo registrado.";
+        } else {
+            emprestimos.forEach(function (emprestimo) {
+                const leitor = usuarios.find(function (usuario) {
+                    return usuario.id === emprestimo.leitorId;
+                });
+
+                const livro = livros.find(function (item) {
+                    return item.id === emprestimo.livroId;
+                });
+
+                const item = document.createElement("div");
+                item.className = "item-historico";
+
+                const descricao = document.createElement("p");
+                const dataEmprestimo = emprestimo.dataEmprestimo
+                    ? emprestimo.dataEmprestimo.split("-").reverse().join("/")
+                    : "Não informada";
+
+                const dataPrevista = emprestimo.dataPrevista
+                    ? emprestimo.dataPrevista.split("-").reverse().join("/")
+                    : "Não informada";
+
+                const dataDevolucao = emprestimo.dataDevolucao
+                    ? emprestimo.dataDevolucao.split("-").reverse().join("/")
+                    : "Ainda não devolvido";
+                let situacao = "Devolvido";
+
+                if (emprestimo.status === "ativo") {
+                    const hoje = new Date();
+                    hoje.setHours(0, 0, 0, 0);
+
+                    const prazo = emprestimo.dataPrevista
+                        ? new Date(emprestimo.dataPrevista + "T00:00:00")
+                        : null;
+
+                    situacao = prazo && prazo < hoje ? "Atrasado" : "Ativo";
+                }
+
+                // Título do livro
+                const tituloLivro = document.createElement("h4");
+                tituloLivro.textContent = livro ? livro.titulo : "Livro não encontrado";
+
+                // Informações do empréstimo
+                descricao.textContent =
+                    "Leitor: " + (leitor ? leitor.nome : "Não encontrado") + "\n" +
+                    "Empréstimo: " + dataEmprestimo + "\n" +
+                    "Previsão: " + dataPrevista + "\n" +
+                    "Devolução: " + dataDevolucao + "\n" +
+                    "Situação: " + situacao;
+
+                // Adicionar os elementos ao bloco
+                item.appendChild(tituloLivro);
+                item.appendChild(descricao);
+                listaHistorico.appendChild(item);
+            });
+        }
     });
 
 }
