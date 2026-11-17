@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookSpace | Administração</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <header>
+        <h1>BookSpace</h1>
+        <p>Painel Administrativo</p>
+    </header>
+
+    <main>
+        <h2>Área do Bibliotecário</h2>
+        <p>Gerencie os recursos da biblioteca.</p>
+
+        <nav>
+            <button id="btnLivros">Gerenciar Livros</button>
+            <button id="btnLeitores">Gerenciar Leitores</button>
+            <button id="btnEmprestimos">Empréstimos</button>
+            <button id="btnHistorico">Histórico</button>
+            <button id="btnSair">Sair</button>
+        </nav>
+
+        <section id="conteudo">
+            <h3>Bem-vindo ao painel administrativo!</h3>
+            <p>Selecione uma opção para começar.</p>
+        </section>
+    </main>
+
+    <script src="js/services/storage.js"></script>
+    <script src="js/services/auth.js"></script>
+    <script src="js/pages/admin.js"></script>
+</body>
+</html>

@@ -21,7 +21,7 @@ formularioLogin.addEventListener("submit", function(evento) {
 
         } else if (usuario.perfil === "bibliotecario") {
         mensagemLogin.textContent =
-        "A área administrativa ainda está em desenvolvimento.";
+        window.location.href = "admin.html";
 }
     } else {
         mensagemLogin.style.color = "#c62828";

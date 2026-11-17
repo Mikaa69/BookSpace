@@ -1,0 +1,211 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6fb;
+    color: #263248;
+}
+
+header {
+    background-color: #253b70;
+    color: white;
+    padding: 24px;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 8px;
+}
+
+main {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+main h2 {
+    margin-bottom: 10px;
+}
+
+main > p {
+    margin-bottom: 25px;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+nav button {
+    background-color: #253b70;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+nav button:hover {
+    background-color: #3958a0;
+}
+
+#btnSair {
+    background-color: #b83c45;
+}
+
+#btnSair:hover {
+    background-color: #942d35;
+}
+
+#conteudo {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    min-height: 220px;
+}
+
+#conteudo h3 {
+    margin-bottom: 12px;
+}
+
+
+/* Formulário de cadastro de livros */
+
+#formLivro {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    margin: 25px 0;
+}
+
+#formLivro input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd3e1;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+#formLivro input:focus {
+    outline: none;
+    border-color: #3958a0;
+}
+
+#formLivro button {
+    background-color: #253b70;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#formLivro button:hover {
+    background-color: #3958a0;
+}
+
+#mensagemLivro {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+#listaLivros {
+    margin-top: 15px;
+    line-height: 2;
+}
+
+@media (max-width: 600px) {
+    #formLivro {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Formulário de cadastro de leitores */
+#formLeitor {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+}
+
+#formLeitor input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+#formLeitor button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+#formLeitor button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Lista de leitores */
+.item-leitor {
+    padding: 12px;
+    margin: 8px 0;
+    background-color: #f3f4f6;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+@media (max-width: 600px) {
+    #formLeitor {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* HISTÓRICO DE EMPRÉSTIMOS */
+
+#listaHistorico {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.item-historico {
+    background-color: #f5f7fb;
+    border: 1px solid #dce3ef;
+    border-left: 5px solid #253b73;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.item-historico p {
+    margin: 0;
+    line-height: 1.8;
+    color: #1d2b45;
+    overflow-wrap: anywhere;
+}
+
+/* ORGANIZAÇÃO DOS REGISTROS DO HISTÓRICO */
+
+.item-historico h4 {
+    margin: 0 0 10px 0;
+    color: #253b73;
+    font-size: 17px;
+}
+
+.item-historico p {
+    white-space: pre-line;
+}
