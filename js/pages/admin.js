@@ -7,6 +7,8 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
     const botaoSair = document.getElementById("btnSair");
     const botaoLivros = document.getElementById("btnLivros");
     const botaoLeitores = document.getElementById("btnLeitores");
+    const botaoEmprestimos = document.getElementById("btnEmprestimos");
+    const botaoHistorico = document.getElementById("btnHistorico");
     const conteudo = document.getElementById("conteudo");
 
     conteudo.innerHTML = `
@@ -454,4 +456,368 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
         listarLeitores();
 
     });
+
+
+    botaoEmprestimos.addEventListener("click", function () {
+        conteudo.innerHTML = `
+            <h3>Gerenciamento de Empréstimos</h3>
+            <p>Registre e acompanhe os empréstimos da biblioteca.</p>
+
+            <form id="formEmprestimo">
+                <label for="leitorEmprestimo">Leitor</label>
+                <select id="leitorEmprestimo" required>
+                    <option value="">Selecione um leitor</option>
+                </select>
+
+                <label for="livroEmprestimo">Livro</label>
+                <select id="livroEmprestimo" required>
+                    <option value="">Selecione um livro</option>
+                </select>
+
+                <button type="submit">
+                    Registrar Empréstimo
+                </button>
+            </form>
+
+            <p id="mensagemEmprestimo"></p>
+
+            <h3>Empréstimos ativos</h3>
+            <div id="listaEmprestimos"></div>
+        `;
+
+
+        // Exibir os empréstimos ativos
+        function listarEmprestimos() {
+            const listaEmprestimos =
+                document.getElementById("listaEmprestimos");
+
+            const emprestimos =
+                Storage.carregar("bookspace_emprestimos") || [];
+
+            const usuarios =
+                Storage.carregar("bookspace_usuarios") || [];
+
+            const livros =
+                Storage.carregar("bookspace_livros") || [];
+
+            const ativos = emprestimos.filter(function (emprestimo) {
+                return emprestimo.status === "ativo";
+            });
+
+            listaEmprestimos.innerHTML = "";
+
+            if (ativos.length === 0) {
+                listaEmprestimos.textContent =
+                    "Nenhum empréstimo ativo.";
+                return;
+            }
+
+            ativos.forEach(function (emprestimo) {
+                const leitor = usuarios.find(function (usuario) {
+                    return usuario.id === emprestimo.leitorId;
+                });
+
+                const livro = livros.find(function (item) {
+                    return item.id === emprestimo.livroId;
+                });
+
+                const item = document.createElement("div");
+                item.className = "item-emprestimo";
+
+                const descricao = document.createElement("p");
+
+                const dataPrevista = emprestimo.dataPrevista
+                    ? emprestimo.dataPrevista.split("-").reverse().join("/")
+                    : "Não informada";
+
+                descricao.textContent =
+                    "Leitor: " + (leitor ? leitor.nome : "Não encontrado") +
+                    " | Livro: " + (livro ? livro.titulo : "Não encontrado") +
+                    " | Devolução prevista: " + dataPrevista;
+
+                
+                // Botão para devolver o livro
+                const botaoDevolver = document.createElement("button");
+                botaoDevolver.type = "button";
+                botaoDevolver.textContent = "Devolver";
+                botaoDevolver.className = "btn-devolver";
+
+                
+                botaoDevolver.addEventListener("click", function () {
+                    const mensagemEmprestimo =
+                        document.getElementById("mensagemEmprestimo");
+
+                    const confirmar = window.confirm(
+                        "Confirmar devolução do livro: " +
+                        (livro ? livro.titulo : "Não encontrado") + "?"
+                    );
+
+                    if (!confirmar) {
+                        return;
+                    }
+
+                    // Buscar os dados atualizados
+                    const emprestimosAtualizados =
+                        Storage.carregar("bookspace_emprestimos") || [];
+
+                    const livrosAtualizados =
+                        Storage.carregar("bookspace_livros") || [];
+
+                    const emprestimoAtual = emprestimosAtualizados.find(
+                        function (item) {
+                            return item.id === emprestimo.id;
+                        }
+                    );
+
+                    const livroAtual = livrosAtualizados.find(
+                        function (item) {
+                            return item.id === emprestimo.livroId;
+                        }
+                    );
+
+                    if (!emprestimoAtual ||
+                        emprestimoAtual.status !== "ativo" ||
+                        !livroAtual) {
+                        mensagemEmprestimo.textContent =
+                            "Não foi possível realizar a devolução.";
+                        return;
+                    }
+
+                    // Registrar a data de devolução
+                    const hoje = new Date();
+
+                    const ano = hoje.getFullYear();
+                    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+                    const dia = String(hoje.getDate()).padStart(2, "0");
+
+                    emprestimoAtual.dataDevolucao =
+                        `${ano}-${mes}-${dia}`;
+
+                    emprestimoAtual.status = "devolvido";
+
+                    // Devolver o exemplar ao estoque
+                    livroAtual.quantidadeDisponivel += 1;
+
+                    // Salvar as alterações
+                    Storage.salvar(
+                        "bookspace_emprestimos",
+                        emprestimosAtualizados
+                    );
+
+                    Storage.salvar(
+                        "bookspace_livros",
+                        livrosAtualizados
+                    );
+
+                    mensagemEmprestimo.textContent =
+                        "Livro devolvido com sucesso!";
+
+                    // Atualizar a lista de empréstimos ativos
+                    listarEmprestimos();
+
+                    // Atualizar os livros disponíveis na seleção
+                    const selectLivro =
+                        document.getElementById("livroEmprestimo");
+
+                    selectLivro.innerHTML =
+                        '<option value="">Selecione um livro</option>';
+
+                    livrosAtualizados.forEach(function (item) {
+                        if (item.quantidadeDisponivel > 0) {
+                            const opcao = document.createElement("option");
+                            opcao.value = item.id;
+                            opcao.textContent = item.titulo;
+                            selectLivro.appendChild(opcao);
+                        }
+                    });
+                });
+
+                item.appendChild(botaoDevolver);    
+
+                item.appendChild(descricao);
+                listaEmprestimos.appendChild(item);
+            });
+        }
+
+        listarEmprestimos();
+
+        // Carregar leitores cadastrados
+        const usuarios = Storage.carregar("bookspace_usuarios") || [];
+        const leitores = usuarios.filter(function (usuario) {
+            return usuario.perfil === "leitor";
+        });
+
+        const selectLeitor = document.getElementById("leitorEmprestimo");
+
+        leitores.forEach(function (leitor) {
+            const opcao = document.createElement("option");
+            opcao.value = leitor.id;
+            opcao.textContent = leitor.nome;
+            selectLeitor.appendChild(opcao);
+        });
+
+        // Carregar livros disponíveis
+        const livros = Storage.carregar("bookspace_livros") || [];
+
+        const selectLivro = document.getElementById("livroEmprestimo");
+
+        livros.forEach(function (livro) {
+            if (livro.quantidadeDisponivel > 0) {
+                const opcao = document.createElement("option");
+                opcao.value = livro.id;
+                opcao.textContent = livro.titulo;
+                selectLivro.appendChild(opcao);
+            }
+        });
+
+        // Capturar o formulário de empréstimos
+        const formEmprestimo = document.getElementById("formEmprestimo");
+        const mensagemEmprestimo = document.getElementById("mensagemEmprestimo");
+
+        formEmprestimo.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+
+            const leitorId = selectLeitor.value;
+            const livroId = selectLivro.value;
+
+            if (!leitorId || !livroId) {
+                mensagemEmprestimo.textContent =
+                    "Selecione um leitor e um livro.";
+                return;
+            }
+
+
+            // RN-01: máximo de 3 empréstimos ativos por leitor
+            const emprestimos = Storage.carregar("bookspace_emprestimos") || [];
+
+            const emprestimosAtivos = emprestimos.filter(function (emprestimo) {
+                return emprestimo.leitorId === leitorId &&
+                    emprestimo.status === "ativo";
+            });
+
+            if (emprestimosAtivos.length >= 3) {
+                mensagemEmprestimo.textContent =
+                    "Este leitor já possui 3 empréstimos ativos.";
+                return;
+            }
+
+
+            // RN-03: bloquear empréstimos para leitores com atrasos
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            const possuiAtraso = emprestimosAtivos.some(function (emprestimo) {
+                if (!emprestimo.dataPrevista) {
+                    return false;
+                }
+
+                const dataPrevista = new Date(
+                    emprestimo.dataPrevista + "T00:00:00"
+                );
+
+                return dataPrevista < hoje;
+            });
+
+            if (possuiAtraso) {
+                mensagemEmprestimo.textContent =
+                    "Este leitor possui empréstimos atrasados. Regularize as devoluções antes de realizar um novo empréstimo.";
+                return;
+            }
+
+
+            // Verificar se o livro selecionado está disponível
+            const livrosAtualizados =
+                Storage.carregar("bookspace_livros") || [];
+
+            const livroSelecionado = livrosAtualizados.find(function (livro) {
+                return livro.id === livroId;
+            });
+
+            if (!livroSelecionado) {
+                mensagemEmprestimo.textContent =
+                    "Livro não encontrado.";
+                return;
+            }
+
+            if (livroSelecionado.quantidadeDisponivel <= 0) {
+                mensagemEmprestimo.textContent =
+                    "Este livro não possui exemplares disponíveis.";
+                return;
+            }
+
+            
+            // RN-02: prazo de devolução de 7 dias corridos
+            const agora = new Date();
+
+            const dataEmprestimo = new Date(agora);
+            dataEmprestimo.setHours(12, 0, 0, 0);
+
+            const dataPrevista = new Date(dataEmprestimo);
+            dataPrevista.setDate(dataPrevista.getDate() + 7);
+
+            function formatarData(data) {
+                const ano = data.getFullYear();
+                const mes = String(data.getMonth() + 1).padStart(2, "0");
+                const dia = String(data.getDate()).padStart(2, "0");
+                return `${ano}-${mes}-${dia}`;
+            }
+
+            // Criar o empréstimo
+            const novoEmprestimo = {
+                id: "E" + Date.now(),
+                leitorId: leitorId,
+                livroId: livroId,
+                dataEmprestimo: formatarData(dataEmprestimo),
+                dataPrevista: formatarData(dataPrevista),
+                dataDevolucao: null,
+                status: "ativo"
+            };
+
+            // Atualizar o estoque do livro
+            livroSelecionado.quantidadeDisponivel -= 1;
+
+            // Salvar os dados
+            emprestimos.push(novoEmprestimo);
+
+            Storage.salvar("bookspace_livros", livrosAtualizados);
+            Storage.salvar("bookspace_emprestimos", emprestimos);
+
+            mensagemEmprestimo.textContent =
+                "Empréstimo registrado com sucesso! Devolução prevista para " +
+                dataPrevista.toLocaleDateString("pt-BR") + ".";
+
+            // Limpar as seleções
+            formEmprestimo.reset();
+
+            // Atualizar a lista de empréstimos ativos
+            listarEmprestimos();
+
+            // Atualizar os livros disponíveis no campo de seleção
+            selectLivro.innerHTML =
+                '<option value="">Selecione um livro</option>';
+
+            livrosAtualizados.forEach(function (livro) {
+                if (livro.quantidadeDisponivel > 0) {
+                    const opcao = document.createElement("option");
+                    opcao.value = livro.id;
+                    opcao.textContent = livro.titulo;
+                    selectLivro.appendChild(opcao);
+                }
+            });
+
+        });
+
+    // GERENCIAMENTO DO HISTÓRICO
+    botaoHistorico.addEventListener("click", function () {
+        conteudo.innerHTML = `
+            <h3>Histórico de Empréstimos</h3>
+            <p>Consulte os empréstimos realizados na biblioteca.</p>
+
+            <h3>Registros de empréstimos</h3>
+            <div id="listaHistorico"></div>
+        `;
+    });
+
+    });
+
 }
