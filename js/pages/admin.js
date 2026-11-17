@@ -6,6 +6,7 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
 } else {
     const botaoSair = document.getElementById("btnSair");
     const botaoLivros = document.getElementById("btnLivros");
+    const botaoLeitores = document.getElementById("btnLeitores");
     const conteudo = document.getElementById("conteudo");
 
     conteudo.innerHTML = `
@@ -237,5 +238,220 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
 
         // Exibe os livros assim que o gerenciamento é aberto.
         listarLivros();
+    });
+
+    botaoLeitores.addEventListener("click", function () {
+        conteudo.innerHTML = `
+            <h3>Gerenciamento de Leitores</h3>
+            <p>Cadastre e consulte os leitores da biblioteca.</p>
+
+            <form id="formLeitor">
+                <input type="text" id="nomeLeitor"
+                    placeholder="Nome completo" required>
+
+                <input type="email" id="emailLeitor"
+                    placeholder="E-mail" required>
+
+                <input type="password" id="senhaLeitor"
+                    placeholder="Senha" minlength="6" required>
+
+                <button type="submit" id="btnSalvarLeitor">
+                    Cadastrar Leitor
+                </button>
+            </form>
+
+            <p id="mensagemLeitor"></p>
+
+            <h3>Leitores cadastrados</h3>
+            <div id="listaLeitores"></div>
+        `;
+
+        let leitorEmEdicaoId = null;
+        const formLeitor = document.getElementById("formLeitor");
+        const mensagemLeitor = document.getElementById("mensagemLeitor");
+        const botaoSalvarLeitor = document.getElementById("btnSalvarLeitor");
+
+
+        const listaLeitores = document.getElementById("listaLeitores");
+
+        function listarLeitores() {
+            const usuarios = Storage.carregar("bookspace_usuarios") || [];
+
+            const leitores = usuarios.filter(function (usuario) {
+                return usuario.perfil === "leitor";
+            });
+
+            listaLeitores.innerHTML = "";
+
+            if (leitores.length === 0) {
+                listaLeitores.textContent = "Nenhum leitor cadastrado.";
+                return;
+            }
+
+            leitores.forEach(function (leitor) {
+                const item = document.createElement("div");
+                item.className = "item-leitor";
+
+                const descricao = document.createElement("span");
+                descricao.textContent =
+                    leitor.nome + " — " + leitor.email;
+
+                const botaoEditar = document.createElement("button");
+                botaoEditar.type = "button";
+                botaoEditar.textContent = "Editar";
+                botaoEditar.className = "btn-editar";
+
+                botaoEditar.addEventListener("click", function () {
+                    leitorEmEdicaoId = leitor.id;
+
+                    document.getElementById("nomeLeitor").value = leitor.nome;
+                    document.getElementById("emailLeitor").value = leitor.email;
+
+                    const campoSenha = document.getElementById("senhaLeitor");
+                    campoSenha.value = "";
+                    campoSenha.required = false;
+
+                    botaoSalvarLeitor.textContent = "Salvar Alterações";
+
+                    mensagemLeitor.textContent =
+                        "Editando leitor: " + leitor.nome;
+                });
+
+
+                const botaoExcluir = document.createElement("button");
+                botaoExcluir.type = "button";
+                botaoExcluir.textContent = "Excluir";
+                botaoExcluir.className = "btn-excluir";
+
+
+                botaoExcluir.addEventListener("click", function () {
+                    const emprestimos =
+                        Storage.carregar("bookspace_emprestimos") || [];
+
+                    const possuiEmprestimoAtivo = emprestimos.some(function (emprestimo) {
+                        return emprestimo.leitorId === leitor.id &&
+                            emprestimo.status === "ativo";
+                    });
+
+                    if (possuiEmprestimoAtivo) {
+                        mensagemLeitor.textContent =
+                            "Não é possível excluir um leitor com empréstimos ativos.";
+                        return;
+                    }
+
+                    const confirmar = window.confirm(
+                        "Deseja realmente excluir o leitor: " + leitor.nome + "?"
+                    );
+
+                    if (!confirmar) {
+                        return;
+                    }
+
+                    const usuarios =
+                        Storage.carregar("bookspace_usuarios") || [];
+
+                    const usuariosAtualizados = usuarios.filter(function (usuario) {
+                        return usuario.id !== leitor.id;
+                    });
+
+                    Storage.salvar("bookspace_usuarios", usuariosAtualizados);
+
+                    if (leitorEmEdicaoId === leitor.id) {
+                        leitorEmEdicaoId = null;
+                        formLeitor.reset();
+                        document.getElementById("senhaLeitor").required = true;
+                        botaoSalvarLeitor.textContent = "Cadastrar Leitor";
+                    }
+
+                    mensagemLeitor.textContent =
+                        "Leitor excluído com sucesso!";
+
+                    listarLeitores();
+                });
+
+                item.appendChild(descricao);
+                item.appendChild(botaoEditar);
+                item.appendChild(botaoExcluir);
+
+                listaLeitores.appendChild(item);
+            });
+        }
+   
+        formLeitor.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+
+            const nome = document.getElementById("nomeLeitor").value.trim();
+            const email = document.getElementById("emailLeitor").value.trim().toLowerCase();
+            const senha = document.getElementById("senhaLeitor").value;
+
+            if (!nome || !email ||
+                (senha.length > 0 && senha.length < 6) ||
+                (leitorEmEdicaoId === null && senha.length === 0)) {
+                mensagemLeitor.textContent =
+                    "Preencha os campos corretamente. A senha deve ter pelo menos 6 caracteres.";
+                return;
+            }
+
+            const usuarios = Storage.carregar("bookspace_usuarios") || [];
+
+            const emailExistente = usuarios.some(function (usuario) {
+                return usuario.email.toLowerCase() === email &&
+                    usuario.id !== leitorEmEdicaoId;
+            });
+
+            if (emailExistente) {
+                mensagemLeitor.textContent =
+                    "Já existe um usuário cadastrado com esse e-mail.";
+                return;
+            }
+
+            if (leitorEmEdicaoId !== null) {
+                const leitor = usuarios.find(function (usuario) {
+                    return usuario.id === leitorEmEdicaoId &&
+                        usuario.perfil === "leitor";
+                });
+
+                if (!leitor) {
+                    mensagemLeitor.textContent = "Leitor não encontrado.";
+                    return;
+                }
+
+                leitor.nome = nome;
+                leitor.email = email;
+
+                if (senha.length > 0) {
+                    leitor.senha = senha;
+                }
+
+                Storage.salvar("bookspace_usuarios", usuarios);
+
+                mensagemLeitor.textContent =
+                    "Leitor atualizado com sucesso!";
+            } else {
+                const novoLeitor = {
+                    id: "U" + Date.now(),
+                    nome: nome,
+                    email: email,
+                    senha: senha,
+                    perfil: "leitor"
+                };
+
+                usuarios.push(novoLeitor);
+                Storage.salvar("bookspace_usuarios", usuarios);
+
+                mensagemLeitor.textContent =
+                    "Leitor cadastrado com sucesso!";
+            }
+
+            leitorEmEdicaoId = null;
+            formLeitor.reset();
+            document.getElementById("senhaLeitor").required = true;
+            botaoSalvarLeitor.textContent = "Cadastrar Leitor";
+
+            listarLeitores();
+        });
+
+        listarLeitores();
+
     });
 }

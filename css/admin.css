@@ -129,3 +129,47 @@ nav button:hover {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Formulário de cadastro de leitores */
+#formLeitor {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+}
+
+#formLeitor input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+#formLeitor button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+#formLeitor button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Lista de leitores */
+.item-leitor {
+    padding: 12px;
+    margin: 8px 0;
+    background-color: #f3f4f6;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+@media (max-width: 600px) {
+    #formLeitor {
+        grid-template-columns: 1fr;
+    }
+}
