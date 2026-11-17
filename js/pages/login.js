@@ -9,7 +9,7 @@ formularioLogin.addEventListener("submit", function(evento) {
     const senha = document.getElementById("senha").value;
 
     const loginRealizado = Auth.login(email, senha);
-
+//login funcionando
     if (loginRealizado) {
         mensagemLogin.style.color = "green";
         mensagemLogin.textContent = "Login realizado com sucesso!";
@@ -18,7 +18,7 @@ formularioLogin.addEventListener("submit", function(evento) {
 
         if (usuario.perfil === "leitor") {
         window.location.href = "leitor.html";
-        
+
         } else if (usuario.perfil === "bibliotecario") {
         mensagemLogin.textContent =
         "A área administrativa ainda está em desenvolvimento.";
