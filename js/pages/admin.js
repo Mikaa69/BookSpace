@@ -482,12 +482,26 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             <p id="mensagemEmprestimo"></p>
 
             <h3>Empréstimos ativos</h3>
-            <div id="listaEmprestimos"></div>
+
+            <label for="pesquisaEmprestimos">Pesquisar empréstimos:</label>
+            <input
+                type="search"
+                id="pesquisaEmprestimos"
+                placeholder="Digite o nome do leitor ou título do livro"
+        >
+
+        <div id="listaEmprestimos"></div>
         `;
 
 
         // Exibir os empréstimos ativos
         function listarEmprestimos() {
+            const campoPesquisaEmprestimos =
+                document.getElementById("pesquisaEmprestimos");
+
+                campoPesquisaEmprestimos.addEventListener("input", function () {
+                listarEmprestimos();
+    });
             const listaEmprestimos =
                 document.getElementById("listaEmprestimos");
 
@@ -500,16 +514,39 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             const livros =
                 Storage.carregar("bookspace_livros") || [];
 
+            const pesquisa = campoPesquisaEmprestimos.value
+            .toLowerCase()
+            .trim();
+
             const ativos = emprestimos.filter(function (emprestimo) {
-                return emprestimo.status === "ativo";
+            if (emprestimo.status !== "ativo") {
+            return false;
+            }
+
+            const leitor = usuarios.find(function (usuario) {
+            return usuario.id === emprestimo.leitorId;
+            });
+
+            const livro = livros.find(function (item) {
+            return item.id === emprestimo.livroId;
+            });
+
+            const nomeLeitor = leitor ? leitor.nome.toLowerCase() : "";
+            const tituloLivro = livro ? livro.titulo.toLowerCase() : "";
+
+            return (
+            nomeLeitor.includes(pesquisa) ||
+            tituloLivro.includes(pesquisa)
+            );
             });
 
             listaEmprestimos.innerHTML = "";
 
             if (ativos.length === 0) {
-                listaEmprestimos.textContent =
-                    "Nenhum empréstimo ativo.";
-                return;
+            listaEmprestimos.textContent = pesquisa
+            ? "Nenhum empréstimo encontrado para esta pesquisa."
+            : "Nenhum empréstimo ativo.";
+            return;
             }
 
             ativos.forEach(function (emprestimo) {
