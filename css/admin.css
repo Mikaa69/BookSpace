@@ -375,3 +375,117 @@ nav button:hover {
         max-width: 100%;
     }
 }
+
+
+/* =========================================
+   LISTAS DE LIVROS E LEITORES
+========================================= */
+
+#listaLivros,
+#listaLeitores {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* Cards dos livros e leitores */
+.item-livro,
+.item-leitor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px 18px;
+    margin: 0;
+
+    background-color: #f5f7fc;
+    border: 1px solid #dce3ef;
+    border-left: 5px solid #253b70;
+    border-radius: 10px;
+
+    transition: background-color 0.2s;
+}
+
+.item-livro:hover,
+.item-leitor:hover {
+    background-color: #edf2fc;
+}
+
+/* Informações dos registros */
+.item-livro span,
+.item-leitor span {
+    flex: 1;
+    min-width: 0;
+
+    color: #263248;
+    font-size: 14px;
+    line-height: 1.6;
+
+    overflow-wrap: anywhere;
+}
+
+/* Botões de ação */
+.btn-editar,
+.btn-excluir {
+    padding: 9px 15px;
+
+    border: none;
+    border-radius: 7px;
+
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition: background-color 0.2s;
+}
+
+/* Botão Editar */
+.btn-editar {
+    background-color: #253b70;
+}
+
+.btn-editar:hover {
+    background-color: #3958a0;
+}
+
+/* Botão Excluir */
+.btn-excluir {
+    background-color: #b83c45;
+}
+
+.btn-excluir:hover {
+    background-color: #942d35;
+}
+
+/* Acessibilidade */
+.btn-editar:focus-visible,
+.btn-excluir:focus-visible {
+    outline: 3px solid #93b4f5;
+    outline-offset: 2px;
+}
+
+/* Responsividade */
+@media (max-width: 650px) {
+    .item-livro,
+    .item-leitor {
+        flex-wrap: wrap;
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .item-livro span,
+    .item-leitor span {
+        flex-basis: 100%;
+    }
+
+    .btn-editar,
+    .btn-excluir {
+        flex: 1;
+        text-align: center;
+    }
+}
