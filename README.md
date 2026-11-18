@@ -1,5 +1,5 @@
 
-# 📚 BookSpace
+# BookSpace
 
 Sistema web de gerenciamento de biblioteca desenvolvido como projeto acadêmico do curso de **Sistemas de Informação**.
 
