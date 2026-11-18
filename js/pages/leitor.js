@@ -21,7 +21,7 @@ botaoCatalogo.addEventListener("click", function() {
     <input
         type="search"
         id="pesquisa-livros"
-        placeholder="Digite o título ou autor"
+        placeholder="Digite o título, autor ou categoria"
     >
 
         <div id="lista-livros"></div>
@@ -45,11 +45,28 @@ botaoCatalogo.addEventListener("click", function() {
         const autor = document.createElement("p");
         autor.textContent = `Autor: ${livro.autor}`;
 
-        const disponibilidade = document.createElement("p");
-        disponibilidade.textContent =
-            `Disponíveis: ${livro.quantidadeDisponivel}`;
+        const isbn = document.createElement("p");
+        isbn.textContent = `ISBN: ${livro.isbn}`;
 
-        item.append(titulo, autor, disponibilidade);
+        const categoria = document.createElement("p");
+        categoria.textContent = `Categoria: ${livro.categoria}`;
+
+        const quantidadeTotal = document.createElement("p");
+        quantidadeTotal.textContent =
+        `Quantidade total: ${livro.quantidadeTotal}`;
+
+    const disponibilidade = document.createElement("p");
+    disponibilidade.textContent =
+    `Disponíveis: ${livro.quantidadeDisponivel}`;
+
+item.append(
+    titulo,
+    autor,
+    isbn,
+    categoria,
+    quantidadeTotal,
+    disponibilidade
+);
         listaLivros.appendChild(item);
     });
 }
@@ -59,9 +76,10 @@ campoPesquisa.addEventListener("input", function() {
     const pesquisa = campoPesquisa.value.toLowerCase().trim();
 
     const livrosFiltrados = livros.filter(function(livro) {
-        return (
-            livro.titulo.toLowerCase().includes(pesquisa) ||
-            livro.autor.toLowerCase().includes(pesquisa)
+    return (
+        livro.titulo.toLowerCase().includes(pesquisa) ||
+        livro.autor.toLowerCase().includes(pesquisa) ||
+        livro.categoria.toLowerCase().includes(pesquisa)
         );
     });
 
@@ -114,7 +132,14 @@ meusEmprestimos.forEach(function(emprestimo) {
 
     const titulo = document.createElement("h4");
     titulo.textContent = nomeLivro;
+    const dataEmprestimo = document.createElement("p");
 
+    dataEmprestimo.textContent =
+    `Data do empréstimo: ${
+        new Date(
+            emprestimo.dataEmprestimo + "T12:00:00"
+        ).toLocaleDateString("pt-BR")
+    }`;
     const devolucao = document.createElement("p");
     devolucao.textContent =
         `Devolução prevista: ${dataPrevista.toLocaleDateString("pt-BR")}`;
@@ -123,7 +148,7 @@ meusEmprestimos.forEach(function(emprestimo) {
     status.textContent = atrasado ? "Status: Atrasado" : "Status: Em dia";
     status.style.color = atrasado ? "#c62828" : "#2e7d32";
 
-    item.append(titulo, devolucao, status);
+    item.append(titulo,dataEmprestimo, devolucao, status);
     listaEmprestimos.appendChild(item);
 });
 });
