@@ -38,8 +38,20 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
                 <input type="text" id="isbnLivro"
                     placeholder="ISBN" required>
 
-                <input type="text" id="categoriaLivro"
-                    placeholder="Categoria" required>
+                <select id="categoriaLivro" required>
+                <option value="">Selecione uma categoria</option>
+                <option value="Romance">Romance</option>
+                <option value="Fantasia">Fantasia</option>
+                <option value="Ficção Científica">Ficção Científica</option>
+                <option value="Terror">Terror</option>
+                <option value="Suspense">Suspense</option>
+                <option value="Aventura">Aventura</option>
+                <option value="Biografia">Biografia</option>
+                <option value="História">História</option>
+                <option value="Tecnologia">Tecnologia</option>
+                <option value="Educação">Educação</option>
+                <option value="Outros">Outros</option>
+            </select>
 
                 <input type="number" id="quantidadeLivro"
                     placeholder="Quantidade" min="1" step="1" required>
@@ -162,6 +174,7 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             const titulo = document.getElementById("tituloLivro").value.trim();
             const autor = document.getElementById("autorLivro").value.trim();
             const isbn = document.getElementById("isbnLivro").value.trim();
+            
             const categoria = document.getElementById("categoriaLivro").value.trim();
             const quantidade = Number(
                 document.getElementById("quantidadeLivro").value
@@ -171,6 +184,18 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
                 !Number.isInteger(quantidade) || quantidade < 1) {
                 mensagemLivro.textContent = "Preencha os campos corretamente.";
                 return;
+            }
+            if (!titulo || !autor || !isbn || !categoria ||
+            !Number.isInteger(quantidade) || quantidade < 1) {
+            mensagemLivro.textContent = "Preencha os campos corretamente.";
+            return;
+            }
+
+            // Validar ISBN de 10 ou 13 dígitos
+            if (!/^(?:\d{10}|\d{13})$/.test(isbn)) {
+            mensagemLivro.textContent =
+            "O ISBN deve conter exatamente 10 ou 13 números, sem espaços ou hífens.";
+            return;
             }
 
             const livros = Storage.carregar("bookspace_livros") || [];
@@ -385,6 +410,12 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             const nome = document.getElementById("nomeLeitor").value.trim();
             const email = document.getElementById("emailLeitor").value.trim().toLowerCase();
             const senha = document.getElementById("senhaLeitor").value;
+            // Validar nome do leitor
+            if (!/^[\p{L}\p{M}]+(?:[ '\-][\p{L}\p{M}]+)*$/u.test(nome)) {
+            mensagemLeitor.textContent =
+            "O nome deve conter apenas letras, espaços, apóstrofos ou hífens.";
+            return;
+            }
 
             if (!nome || !email ||
                 (senha.length > 0 && senha.length < 6) ||
@@ -629,7 +660,8 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
 
                     emprestimoAtual.dataDevolucao =
                         `${ano}-${mes}-${dia}`;
-
+                    emprestimoAtual.horarioDevolucao =
+                    hoje.toLocaleTimeString("pt-BR");
                     emprestimoAtual.status = "devolvido";
 
                     // Devolver o exemplar ao estoque
@@ -739,7 +771,7 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             }
 
 
-            // RN-03: bloquear empréstimos para leitores com atrasos
+            // RN-07: bloquear empréstimos para leitores com atrasos
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
 
@@ -783,7 +815,7 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             }
 
 
-            // RN-02: prazo de devolução de 7 dias corridos
+            // RN-06: prazo de devolução de 7 dias corridos
             const agora = new Date();
 
             const dataEmprestimo = new Date(agora);
@@ -800,15 +832,17 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
             }
 
             // Criar o empréstimo
-            const novoEmprestimo = {
-                id: "E" + Date.now(),
-                leitorId: leitorId,
-                livroId: livroId,
-                dataEmprestimo: formatarData(dataEmprestimo),
-                dataPrevista: formatarData(dataPrevista),
-                dataDevolucao: null,
-                status: "ativo"
-            };
+        const novoEmprestimo = {
+            id: "E" + Date.now(),
+            leitorId: leitorId,
+            livroId: livroId,
+            dataEmprestimo: formatarData(dataEmprestimo),
+            horarioEmprestimo: agora.toLocaleTimeString("pt-BR"),
+            dataPrevista: formatarData(dataPrevista),
+            dataDevolucao: null,
+            horarioDevolucao: null,
+            status: "ativo"
+        };
 
             // Atualizar o estoque do livro
             livroSelecionado.quantidadeDisponivel -= 1;
@@ -909,11 +943,15 @@ if (!usuarioLogado || usuarioLogado.perfil !== "bibliotecario") {
 
                 // Informações do empréstimo
                 descricao.textContent =
-                    "Leitor: " + (leitor ? leitor.nome : "Não encontrado") + "\n" +
-                    "Empréstimo: " + dataEmprestimo + "\n" +
-                    "Previsão: " + dataPrevista + "\n" +
-                    "Devolução: " + dataDevolucao + "\n" +
-                    "Situação: " + situacao;
+                "Leitor: " + (leitor ? leitor.nome : "Não encontrado") + "\n" +
+                "Empréstimo: " + dataEmprestimo +
+                " às " + (emprestimo.horarioEmprestimo || "Horário não registrado") + "\n" +
+                "Previsão: " + dataPrevista + "\n" +
+                "Devolução: " + dataDevolucao +
+                (emprestimo.dataDevolucao
+                ? " às " + (emprestimo.horarioDevolucao || "Horário não registrado")
+                : "") + "\n" +
+                "Situação: " + situacao;
 
                 // Adicionar os elementos ao bloco
                 item.appendChild(tituloLivro);
