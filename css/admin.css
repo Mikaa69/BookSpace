@@ -335,3 +335,43 @@ nav button:hover {
         width: 100%;
     }
 }
+/* Campo de pesquisa de empréstimos */
+#pesquisaEmprestimos {
+    width: 100%;
+    max-width: 450px;
+    padding: 12px 14px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    background-color: #ffffff;
+    color: #1e293b;
+
+    font-size: 14px;
+    font-family: inherit;
+
+    box-sizing: border-box;
+    outline: none;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Destaque ao clicar na pesquisa */
+#pesquisaEmprestimos:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Texto dentro da barra */
+#pesquisaEmprestimos::placeholder {
+    color: #94a3b8;
+}
+
+/* Ajuste para celulares */
+@media (max-width: 600px) {
+    #pesquisaEmprestimos {
+        max-width: 100%;
+    }
+}
