@@ -1,6 +1,31 @@
 
 const Auth = {
+    inicializarAdmin() {
+        const usuarios = Storage.carregar("bookspace_usuarios") || [];
+
+        const emailAdmin = "admin@bookspace.com";
+
+        const adminExiste = usuarios.some(function(usuario) {
+            return usuario.email.toLowerCase() === emailAdmin;
+        });
+
+        if (!adminExiste) {
+            const admin = {
+                id: "admin-padrao",
+                nome: "Administrador BookSpace",
+                email: emailAdmin,
+                senha: "123456",
+                perfil: "bibliotecario"
+            };
+
+            usuarios.push(admin);
+            Storage.salvar("bookspace_usuarios", usuarios);
+        }
+    },
+
     login(email, senha) {
+        this.inicializarAdmin();
+
         const usuarios = Storage.carregar("bookspace_usuarios") || [];
 
         const usuario = usuarios.find(function(usuario) {
@@ -23,7 +48,6 @@ const Auth = {
         return true;
     },
 
-
     logout() {
         Storage.remover("bookspace_sessao");
     },
@@ -33,3 +57,5 @@ const Auth = {
     }
 };
 
+// Garante o cadastro do administrador ao carregar o arquivo.
+Auth.inicializarAdmin();

@@ -62,6 +62,20 @@ O BookSpace permite organizar o acervo de livros, cadastrar leitores, controlar 
 
 **Observação:** o BookSpace é um projeto front-end e não necessita de instalação de banco de dados ou servidor de aplicação. Os dados são armazenados localmente no navegador utilizado.
 
+## 🔐 Acesso de demonstração
+
+O BookSpace possui uma conta de administrador padrão, criada
+automaticamente na primeira execução do sistema.
+
+### Administrador (Bibliotecário)
+
+- **E-mail:** admin@bookspace.com
+- **Senha:** 123456
+- **Perfil:** Bibliotecário
+
+O administrador pode gerenciar livros, leitores, empréstimos
+e devoluções, além de consultar o histórico de empréstimos.
+
 ## Testes realizados
 
 Foram realizados testes manuais para verificar:
@@ -139,4 +153,4 @@ Exemplos:
 
 O BookSpace foi desenvolvido exclusivamente como projeto acadêmico do curso de Sistemas de Informação, com o objetivo de aplicar na prática os conhecimentos adquiridos durante a graduação.
 
-O sistema possui finalidade exclusivamente educacional, não sendo destinado à utilização comercial ou ao gerenciamento de bibliotecas reais.
+
